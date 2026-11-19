@@ -1,0 +1,121 @@
+<main class="register-page">
+  <section class="register-card">
+    @if (verified()) {
+      <p class="register-eyebrow">Email verified</p>
+      <h1>You're all set</h1>
+      <p class="register-intro">Your account is ready. Sign in to continue.</p>
+      <button type="button" (click)="goToLogin()">Go to sign in</button>
+    } @else if (verificationPending()) {
+      <form #verificationForm="ngForm" (ngSubmit)="submitVerification(verificationForm)">
+        <p class="register-eyebrow">One last step</p>
+        <h1>Verify your email</h1>
+        <p class="register-intro">
+          Enter the verification code sent to <strong>{{ email() }}</strong>.
+        </p>
+
+        <label for="code">Verification code</label>
+        <input
+          id="code"
+          name="code"
+          type="text"
+          autocomplete="one-time-code"
+          required
+          ngModel
+        />
+
+        @if (error()) {
+          <p class="register-error" role="alert">{{ error() }}</p>
+        }
+
+        <button type="submit" [disabled]="verificationForm.invalid || loading()">
+          {{ loading() ? 'Verifying...' : 'Verify email' }}
+        </button>
+      </form>
+    } @else {
+      <form #registrationForm="ngForm" (ngSubmit)="submitRegistration(registrationForm)">
+        <p class="register-eyebrow">Join TechNest</p>
+        <h1>Create account</h1>
+        <p class="register-intro">Create an account to shop with us.</p>
+
+        <label for="firstName">First name</label>
+        <input id="firstName" name="firstName" type="text" autocomplete="given-name" required ngModel />
+
+        <label for="lastName">Last name</label>
+        <input id="lastName" name="lastName" type="text" autocomplete="family-name" required ngModel />
+
+        <label for="email">Email</label>
+
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          required
+          [pattern]="emailPattern"
+          ngModel
+          #emailInput="ngModel"
+          [class.invalid]="emailInput.invalid && emailInput.touched"
+        />
+
+        @if (emailInput.invalid && emailInput.touched) {
+          <p class="register-error">
+            @if (emailInput.errors?.['required']) {
+              Email is required.
+            } @else {
+              Please enter a valid email address.
+            }
+          </p>
+        }
+
+      <label for="password">Password</label>
+
+      <div class="password-field">
+        <input
+          id="password"
+          name="password"
+          [type]="passwordVisible() ? 'text' : 'password'"
+          autocomplete="new-password"
+          required
+          [pattern]="passwordPattern"
+          ngModel
+          #passwordInput="ngModel"
+          [class.invalid]="passwordInput.invalid && passwordInput.touched"
+        />
+
+        <button
+          class="password-toggle"
+          type="button"
+          aria-controls="password"
+          (click)="passwordVisible.set(!passwordVisible())"
+        >
+          {{ passwordVisible() ? 'Hide' : 'Show' }}
+        </button>
+      </div>
+
+      @if (passwordInput.dirty && passwordInput.value) {
+        <div class="password-requirements">
+          @for (
+            requirement of getPasswordRequirements(passwordInput.value);
+            track requirement
+          ) {
+            <p class="login-error">{{ requirement }}</p>
+          }
+        </div>
+      }
+
+        @if (error()) {
+          <p class="register-error" role="alert">{{ error() }}</p>
+        }
+
+        <button type="submit" [disabled]="registrationForm.invalid || loading()">
+          {{ loading() ? 'Creating account...' : 'Create account' }}
+        </button>
+      </form>
+    }
+
+    <p class="register-account-link">
+      Already have an account? <a routerLink="/login">Sign in</a>
+    </p>
+    <a class="register-back" routerLink="/">Back to Home page</a>
+  </section>
+</main>

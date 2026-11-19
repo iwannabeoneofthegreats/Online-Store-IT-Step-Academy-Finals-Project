@@ -1,0 +1,70 @@
+<main class="products-page">
+  <h1>{{ categoryName() }}</h1>
+  @if (categoryError()) {
+    <p class="error-message">{{ categoryError() }}</p>
+  }
+
+  @if (loading()) {
+    <p>Loading products...</p>
+  } @else if (error()) {
+    <p class="error-message">{{ error() }}</p>
+  } @else if (filteredProducts().length === 0) {
+    @if (searchTerm().trim()) {
+      <p>No products match "{{ searchTerm() }}".</p>
+    } @else {
+      <p>
+        No products found
+        @if (brand()) {
+          for {{ brand() }}.
+        } @else {
+          in this category.
+        }
+      </p>
+    }
+  } @else {
+    <div class="product-list">
+      @for (product of visibleProducts(); track product.id) {
+        <app-product-card
+          [product]="product"
+          [shopLayout]="true"
+          (addToCartRequested)="addToCart($event)"
+        />
+      }
+    </div>
+    @if (totalPages() > 1) {
+      <nav class="pagination" aria-label="Product pages">
+        <button
+          type="button"
+          class="pagination__button"
+          [disabled]="currentPage() === 1 || loading()"
+          (click)="goToPage(currentPage() - 1)"
+        >
+          Previous
+        </button>
+        <div class="pagination__pages">
+          @for (page of pageNumbers(); track page) {
+            <button
+              type="button"
+              class="pagination__button pagination__page"
+              [class.pagination__page--active]="currentPage() === page"
+              [attr.aria-current]="currentPage() === page ? 'page' : null"
+              [attr.aria-label]="'Page ' + page"
+              [disabled]="loading()"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          }
+        </div>
+        <button
+          type="button"
+          class="pagination__button"
+          [disabled]="currentPage() === totalPages() || loading()"
+          (click)="goToPage(currentPage() + 1)"
+        >
+          Next
+        </button>
+      </nav>
+    }
+  }
+</main>

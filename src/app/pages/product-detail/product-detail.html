@@ -1,0 +1,167 @@
+<main class="product-detail-page">
+  <a class="product-detail-back" routerLink="/shops">← Back to shop</a>
+
+  @if (loading()) {
+    <p class="product-detail-state" role="status">Loading product details...</p>
+  } @else if (error()) {
+    <p class="product-detail-state product-detail-error" role="alert">{{ error() }}</p>
+  } @else if (product(); as item) {
+    <article class="product-detail">
+      <div class="product-detail__image">
+        @if (item.imageUrl) {
+          <img [src]="item.imageUrl" [alt]="item.name" />
+        }
+      </div>
+      <div class="product-detail__content">
+        <p class="product-detail__meta">
+          <span>{{ item.category.name }}</span>
+          @if (item.brand) {
+            <span>{{ item.brand }}</span>
+          }
+        </p>
+        <h1>{{ item.name }}</h1>
+        @if (item.model) {
+          <p class="product-detail__model">Model: {{ item.model }}</p>
+        }
+        <app-product-rating [rating]="item.rating" />
+        <p class="product-detail__price">{{ item.price | currency: 'USD' }}</p>
+        <p
+          class="product-detail__stock"
+          [class.product-detail__stock--unavailable]="item.stock <= 0"
+        >
+          {{ item.stock > 0 ? item.stock + ' in stock' : 'Out of stock' }}
+        </p>
+        <button
+          class="product-detail__add-button"
+          type="button"
+          [disabled]="item.stock <= 0"
+          (click)="addToCart(item)"
+        >
+          {{ item.stock > 0 ? 'Add to cart' : 'Out of stock' }}
+        </button>
+        <dl class="product-detail__facts">
+          <div>
+            <dt>Brand</dt>
+            <dd>{{ item.brand || 'Not specified' }}</dd>
+          </div>
+          <div>
+            <dt>Model</dt>
+            <dd>{{ item.model || 'Not specified' }}</dd>
+          </div>
+          <div>
+            <dt>Added</dt>
+            <dd>{{ item.createdAt | date: 'mediumDate' }}</dd>
+          </div>
+          <div>
+            <dt>Category</dt>
+            <dd>{{ item.category.name }}</dd>
+          </div>
+        </dl>
+      </div>
+    </article>
+
+    <section class="product-reviews" aria-labelledby="product-reviews-heading">
+      <h2 id="product-reviews-heading">Customer ratings</h2>
+
+      @if (authService.isAuthenticated()) {
+        <form class="product-reviews__form" (submit)="submitReview($event)">
+          <label for="product-review-rating">Your rating</label>
+          <select
+            id="product-review-rating"
+            [value]="reviewRating()"
+            [disabled]="reviewSubmitting()"
+            (change)="updateReviewRating($event)"
+          >
+            <option value="5">5 stars</option>
+            <option value="4">4 stars</option>
+            <option value="3">3 stars</option>
+            <option value="2">2 stars</option>
+            <option value="1">1 star</option>
+          </select>
+          <button type="submit" [disabled]="reviewSubmitting()">
+            {{ reviewSubmitting() ? 'Submitting...' : 'Submit rating' }}
+          </button>
+        </form>
+        @if (reviewSubmitError()) {
+          <p class="product-reviews__error" role="alert">{{ reviewSubmitError() }}</p>
+        }
+      } @else {
+        <p class="product-reviews__sign-in">
+          <a routerLink="/login">Sign in</a> to leave a rating.
+        </p>
+      }
+
+      @if (reviewsLoading() && reviews().length === 0) {
+        <p class="product-detail-state" role="status">Loading ratings...</p>
+      } @else if (reviewsError() && reviews().length === 0) {
+        <p class="product-reviews__error" role="alert">{{ reviewsError() }}</p>
+        <button type="button" (click)="retryReviews()">Try again</button>
+      } @else if (reviews().length === 0) {
+        <p class="product-detail-state">No ratings yet. Be the first to rate this product.</p>
+      } @else {
+        @if (reviewDeleteError()) {
+          <p class="product-reviews__error" role="alert">{{ reviewDeleteError() }}</p>
+        }
+        <div class="product-reviews__list">
+          @for (review of reviews(); track review.id) {
+            <article class="product-reviews__item">
+              <div class="product-reviews__item-heading">
+                <strong>{{ reviewerName(review) }}</strong>
+                <time [attr.datetime]="review.createdAt">
+                  {{ review.createdAt | date: 'mediumDate' }}
+                </time>
+              </div>
+              <div class="product-reviews__rating-row">
+                <app-product-rating [rating]="review.rating" />
+                @if (
+                  authService.isAuthenticated() &&
+                  currentUserId() === review.user.id
+                ) {
+                  <button
+                    class="product-reviews__delete"
+                    type="button"
+                    [disabled]="reviewDeleting()"
+                    (click)="deleteReview(review)"
+                  >
+                    {{ reviewDeleting() ? 'Deleting...' : 'Delete my rating' }}
+                  </button>
+                }
+              </div>
+            </article>
+          }
+        </div>
+
+        @if (reviewsError()) {
+          <p class="product-reviews__error" role="alert">{{ reviewsError() }}</p>
+        }
+        @if (reviewsHaveMore()) {
+          <button
+            class="product-reviews__more"
+            type="button"
+            [disabled]="reviewsLoading()"
+            (click)="loadMoreReviews()"
+          >
+            {{ reviewsLoading() ? 'Loading...' : 'Load more ratings' }}
+          </button>
+        }
+      }
+    </section>
+
+    @if (relatedProducts().length > 0) {
+      <section class="related-products" aria-labelledby="related-products-heading">
+        <h2 id="related-products-heading">Related products</h2>
+        <div class="related-products__grid">
+          @for (relatedProduct of relatedProducts(); track relatedProduct.id) {
+            <app-product-card
+              [product]="relatedProduct"
+              [shopLayout]="true"
+              (addToCartRequested)="addToCart($event)"
+            />
+          }
+        </div>
+      </section>
+    }
+  }
+
+  <app-shop-benefits />
+</main>

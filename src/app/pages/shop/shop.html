@@ -1,0 +1,113 @@
+<div class="shop-layout">
+  <aside class="shop-sidebar" aria-label="Shop categories">
+    <h2>Categories</h2>
+    @if (loadingCategories()) {
+      <p class="shop-sidebar__state" role="status">Loading categories...</p>
+    } @else if (categoriesError() && categories().length === 0) {
+      <p class="shop-sidebar__state" role="alert">{{ categoriesError() }}</p>
+    } @else {
+      <nav class="shop-category-list" aria-label="Filter products by category">
+        @for (category of categories(); track category.id) {
+          <a
+            class="shop-category-link"
+            routerLink="/shops"
+            [queryParams]="{ category: category.id }"
+            [class.active]="selectedCategoryId() === category.id"
+            [attr.aria-current]="selectedCategoryId() === category.id ? 'page' : null"
+          >
+            <span>{{ category.name }}</span>
+            <span class="shop-category-count">{{ category.productCount }}</span>
+          </a>
+        }
+      </nav>
+    }
+
+    <section class="shop-filters" aria-label="Filter products">
+      <h2>Filters</h2>
+      <label class="shop-filter">
+        <span>Sort by</span>
+        <select [value]="sortBy()" (change)="updateSortBy($event)">
+          <option value="newest">Newest</option>
+          <option value="priceAsc">Price: Low to High</option>
+          <option value="priceDesc">Price: High to Low</option>
+        </select>
+      </label>
+
+      <label class="shop-filter">
+        <span>Brand</span>
+        <select [value]="selectedBrand()" (change)="updateBrand($event)">
+          <option value="">All brands</option>
+          @for (brand of brands(); track brand) {
+            <option [value]="brand">{{ brand }}</option>
+          }
+        </select>
+      </label>
+
+      <fieldset class="shop-price-filter">
+        <legend>Price range</legend>
+        <div class="shop-price-filter__inputs">
+          <label>
+            <span class="visually-hidden">Minimum price</span>
+            <input
+              type="number"
+              min="0"
+              placeholder="Min"
+              [value]="minPrice()"
+              (input)="updateMinPrice($event)"
+            />
+          </label>
+          <span aria-hidden="true">–</span>
+          <label>
+            <span class="visually-hidden">Maximum price</span>
+            <input
+              type="number"
+              min="0"
+              placeholder="Max"
+              [value]="maxPrice()"
+              (input)="updateMaxPrice($event)"
+            />
+          </label>
+        </div>
+      </fieldset>
+
+      <label class="shop-filter">
+        <span>Minimum rating</span>
+        <select [value]="minRating()" (change)="updateMinRating($event)">
+          <option value="0">Any rating</option>
+          <option value="4">4 stars &amp; up</option>
+          <option value="3">3 stars &amp; up</option>
+          <option value="2">2 stars &amp; up</option>
+        </select>
+      </label>
+
+      <label class="shop-stock-filter">
+        <input
+          type="checkbox"
+          [checked]="inStockOnly()"
+          (change)="updateInStockOnly($event)"
+        />
+        <span>In stock only</span>
+      </label>
+    </section>
+  </aside>
+
+  <section class="shop-products" aria-label="Products">
+    @if (selectedCategoryId() !== null || selectedBrand()) {
+      <app-products
+        [categoryId]="selectedCategoryId()"
+        [brand]="selectedBrand()"
+        [minPrice]="minPrice()"
+        [maxPrice]="maxPrice()"
+        [minRating]="minRating()"
+        [inStockOnly]="inStockOnly()"
+        [sortBy]="sortBy()"
+      />
+    } @else if (categoriesError()) {
+      <p class="shop-products__state" role="alert">{{ categoriesError() }}</p>
+    } @else {
+      <p class="shop-products__state" role="status">Loading products...</p>
+    }
+  </section>
+</div>
+
+<app-shop-benefits />

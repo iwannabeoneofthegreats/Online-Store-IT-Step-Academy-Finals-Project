@@ -1,0 +1,85 @@
+<main class="cart-page">
+  <header class="cart-header">
+    <div>
+      <p class="cart-eyebrow">Your items</p>
+      <h1>Shopping cart</h1>
+    </div>
+    <a class="cart-continue" routerLink="/shops">Continue shopping</a>
+  </header>
+
+  @if (cartService.items().length === 0) {
+    <section class="cart-empty">
+      <h2>Your cart is empty</h2>
+      <p>Add products from the shop and they'll show up here.</p>
+      <a class="cart-primary-button" routerLink="/shops">Browse products</a>
+    </section>
+  } @else {
+    <div class="cart-layout">
+      <section class="cart-items" aria-label="Items in your cart">
+        @for (item of cartService.items(); track item.product.id) {
+          <article class="cart-item">
+            @if (item.product.imageUrl) {
+              <img
+                class="cart-item__image"
+                [src]="item.product.imageUrl"
+                [alt]="item.product.name"
+              />
+            }
+            <div class="cart-item__details">
+              <h2>{{ item.product.name }}</h2>
+              <app-product-rating [rating]="item.product.rating" />
+              @if (item.product.brand || item.product.model) {
+                <p>{{ item.product.brand }} {{ item.product.model }}</p>
+              }
+              <strong>{{ item.product.price | currency: 'USD' }}</strong>
+            </div>
+            <div class="cart-item__quantity" aria-label="Quantity controls">
+              <button
+                type="button"
+                [disabled]="item.quantity <= 1"
+                [attr.aria-label]="'Decrease quantity of ' + item.product.name"
+                (click)="cartService.decrease(item.product.id)"
+              >
+                −
+              </button>
+              <span aria-live="polite">{{ item.quantity }}</span>
+              <button
+                type="button"
+                [attr.aria-label]="'Increase quantity of ' + item.product.name"
+                (click)="cartService.increase(item.product.id)"
+              >
+                +
+              </button>
+            </div>
+            <strong class="cart-item__subtotal">
+              {{ item.product.price * item.quantity | currency: 'USD' }}
+            </strong>
+            <button
+              class="cart-item__remove"
+              type="button"
+              [attr.aria-label]="'Remove ' + item.product.name + ' from cart'"
+              (click)="cartService.remove(item.id)"
+            >
+              Remove
+            </button>
+          </article>
+        }
+      </section>
+
+      <aside class="cart-summary" aria-label="Order summary">
+        <h2>Order summary</h2>
+        <p>
+          <span>Items ({{ cartService.itemCount() }})</span>
+          <strong>{{ cartService.total() | currency: 'USD' }}</strong>
+        </p>
+        <p class="cart-summary__total">
+          <span>Total</span>
+          <strong>{{ cartService.total() | currency: 'USD' }}</strong>
+        </p>
+        <button class="cart-primary-button" type="button" (click)="checkout()">
+          Checkout
+        </button>
+      </aside>
+    </div>
+  }
+</main>

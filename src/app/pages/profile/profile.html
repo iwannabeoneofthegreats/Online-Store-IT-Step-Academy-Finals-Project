@@ -1,0 +1,227 @@
+<main class="profile-page">
+  <header class="profile-header">
+    <div>
+      <p class="profile-eyebrow">Your account</p>
+      <h1>Profile</h1>
+      <p class="profile-intro">Manage your personal information and password.</p>
+    </div>
+    <button class="profile-sign-out" type="button" (click)="signOut()">Sign out</button>
+  </header>
+
+  @if (loading()) {
+    <p class="profile-state" role="status">Loading your profile...</p>
+  } @else if (loadError()) {
+    <section class="profile-card profile-load-error">
+      <p role="alert">{{ loadError() }}</p>
+      <button class="profile-button" type="button" (click)="loadProfile()">
+        Try again
+      </button>
+    </section>
+  } @else if (profile(); as user) {
+    <div class="profile-content">
+      <a class="profile-favorites-link" routerLink="/favorites">
+        <span class="profile-favorites-link__icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path
+              d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.8"
+            />
+          </svg>
+        </span>
+        <span>
+          <strong>Favorited items</strong>
+          <small>View and manage the products you have saved.</small>
+        </span>
+        <span class="profile-favorites-link__arrow" aria-hidden="true">→</span>
+      </a>
+
+      <section class="profile-card">
+        <div class="profile-card__heading">
+          <div>
+            <h2>Personal information</h2>
+            <p>Update the details associated with your account.</p>
+          </div>
+          <span class="profile-role">{{ user.role }}</span>
+        </div>
+
+        <form #profileNgForm="ngForm" (ngSubmit)="saveProfile(profileNgForm)">
+          <div class="profile-fields">
+            <label>
+              <span>First name</span>
+              <input
+                type="text"
+                name="firstName"
+                autocomplete="given-name"
+                required
+                [(ngModel)]="profileForm.firstName"
+              />
+            </label>
+            <label>
+              <span>Last name</span>
+              <input
+                type="text"
+                name="lastName"
+                autocomplete="family-name"
+                required
+                [(ngModel)]="profileForm.lastName"
+              />
+            </label>
+            <label>
+              <span>Email</span>
+              <input
+                type="email"
+                name="email"
+                autocomplete="email"
+                required
+                email
+                [(ngModel)]="profileForm.email"
+              />
+            </label>
+            <label>
+              <span>Phone number</span>
+              <input
+                type="tel"
+                name="phoneNumber"
+                autocomplete="tel"
+                required
+                pattern="[0-9+(). -]+"
+                [(ngModel)]="profileForm.phoneNumber"
+              />
+            </label>
+            <p class="profile-hint profile-field--wide">
+              Use 7 to 15 digits. Spaces, +, parentheses, periods, and hyphens are okay.
+            </p>
+            @if (profileNgForm.controls['phoneNumber']?.touched && (profileNgForm.controls['phoneNumber']?.invalid || !isPhoneNumberValid(profileForm.phoneNumber))) {
+              <p class="profile-hint profile-field--wide" role="status">
+                Enter a valid phone number with 7 to 15 digits.
+              </p>
+            }
+            <label>
+              <span>Date of birth</span>
+              <input
+                type="date"
+                name="dateOfBirth"
+                autocomplete="bday"
+                [(ngModel)]="profileForm.dateOfBirth"
+              />
+            </label>
+            <label>
+              <span>Profile picture URL (optional)</span>
+              <input
+                type="url"
+                name="pictureUrl"
+                [(ngModel)]="profileForm.pictureUrl"
+              />
+            </label>
+            <label>
+              <span>Or choose an image file</span>
+              <input
+                type="file"
+                accept="image/*"
+                (change)="onPictureSelected($event)"
+              />
+            </label>
+            @if (profileForm.pictureUrl) {
+              <div class="profile-picture-preview profile-field--wide">
+                <span>Picture preview</span>
+                <img
+                  class="profile-avatar"
+                  [src]="profileForm.pictureUrl"
+                  alt="Profile picture preview"
+                />
+              </div>
+            }
+            @if (pictureLoading()) {
+              <p class="profile-hint profile-field--wide" role="status">
+                Reading your image...
+              </p>
+            }
+            <label class="profile-field--wide">
+              <span>Address</span>
+              <textarea
+                name="address"
+                rows="3"
+                autocomplete="street-address"
+                [(ngModel)]="profileForm.address"
+              ></textarea>
+            </label>
+          </div>
+
+          @if (profileError()) {
+            <p class="profile-error" role="alert">{{ profileError() }}</p>
+          }
+          @if (profileMessage()) {
+            <p class="profile-success" role="status">{{ profileMessage() }}</p>
+          }
+
+          <button
+            class="profile-button"
+            type="submit"
+            [disabled]="profileNgForm.invalid || profileSaving() || pictureLoading()"
+          >
+            {{ profileSaving() ? 'Saving...' : 'Save changes' }}
+          </button>
+        </form>
+      </section>
+
+      <section class="profile-card">
+        <div class="profile-card__heading">
+          <div>
+            <h2>Change password</h2>
+            <p>Use at least 8 characters, including an uppercase letter, a number, and a symbol.</p>
+          </div>
+        </div>
+
+        <form #passwordNgForm="ngForm" (ngSubmit)="changePassword(passwordNgForm)">
+          <div class="profile-fields profile-fields--password">
+            <label>
+              <span>Current password</span>
+              <input
+                type="password"
+                name="currentPassword"
+                autocomplete="current-password"
+                required
+                [(ngModel)]="passwordForm.currentPassword"
+              />
+            </label>
+            <label>
+              <span>New password</span>
+              <input
+                type="password"
+                name="newPassword"
+                autocomplete="new-password"
+                required
+                minlength="8"
+                pattern="(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}"
+                [(ngModel)]="passwordForm.newPassword"
+              />
+            </label>
+          </div>
+
+          @if (passwordNgForm.controls['newPassword']?.invalid && passwordNgForm.controls['newPassword']?.touched) {
+            <p class="profile-hint" role="status">
+              The new password must be at least 8 characters and include an uppercase letter, a number, and a symbol.
+            </p>
+          }
+          @if (passwordError()) {
+            <p class="profile-error" role="alert">{{ passwordError() }}</p>
+          }
+          @if (passwordMessage()) {
+            <p class="profile-success" role="status">{{ passwordMessage() }}</p>
+          }
+
+          <button
+            class="profile-button"
+            type="submit"
+            [disabled]="passwordNgForm.invalid || passwordSaving()"
+          >
+            {{ passwordSaving() ? 'Updating...' : 'Update password' }}
+          </button>
+        </form>
+      </section>
+    </div>
+  }
+</main>

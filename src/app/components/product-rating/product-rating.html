@@ -1,0 +1,9 @@
+<span class="product-rating" [attr.aria-label]="clampedRating() + ' out of 5 stars'">
+  <span class="product-rating__stars" aria-hidden="true">
+    <span class="product-rating__empty">★★★★★</span>
+    <span class="product-rating__filled" [style.width.%]="clampedRating() * 20">
+      ★★★★★
+    </span>
+  </span>
+  <span class="product-rating__value">{{ clampedRating() | number: '1.1-1' }}</span>
+</span>

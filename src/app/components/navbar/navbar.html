@@ -1,0 +1,133 @@
+<header class="site-header">
+  <div class="navbar">
+    <div class="navbar-header">
+      <a class="brand" routerLink="/" aria-label="TechNest home" (click)="closeMenu()">
+        <span class="brand-mark" aria-hidden="true">T</span>
+        <span>Tech<span class="brand-accent">Nest</span></span>
+      </a>
+
+      <button
+        class="menu-toggle"
+        [class.is-open]="menuOpen()"
+        type="button"
+        [attr.aria-expanded]="menuOpen()"
+        aria-controls="primary-navigation"
+        [attr.aria-label]="menuOpen() ? 'Close navigation menu' : 'Open navigation menu'"
+        (click)="toggleMenu()"
+      >
+        <span class="menu-icon" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </button>
+    </div>
+
+    <div id="primary-navigation" class="navbar-content" [class.is-open]="menuOpen()">
+      <nav class="main-nav" aria-label="Main navigation">
+        <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">Home</a>
+        <a class="nav-link" routerLink="/shops" routerLinkActive="active" (click)="closeMenu()">Shop</a>
+
+        <div class="category-dropdown">
+          <button
+            class="nav-link category-trigger"
+            [class.is-open]="categoriesOpen()"
+            type="button"
+            aria-haspopup="true"
+            [attr.aria-expanded]="categoriesOpen()"
+            (click)="toggleCategories()"
+          >
+            Categories
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path d="m4 6 4 4 4-4" />
+            </svg>
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-heading" routerLink="/shops" (click)="closeMenu()">Browse all categories</a>
+            @for (category of categories(); track category.id) {
+              <a class="dropdown-link" routerLink="/shops" [queryParams]="{ category: category.id }" (click)="closeMenu()">
+                {{ category.name }}
+              </a>
+            } @empty {
+              @if (loading()) {
+                <span class="dropdown-empty">Loading categories...</span>
+              } @else {
+                <span class="dropdown-empty">{{ error() || 'No categories available.' }}</span>
+              }
+            }
+          </div>
+        </div>
+      </nav>
+
+      <div class="navbar-actions">
+        <label class="search-box">
+          <span class="visually-hidden">Search products</span>
+          <svg viewBox="0 0 20 20" aria-hidden="true">
+            <circle cx="8.5" cy="8.5" r="5.5" />
+            <path d="m13 13 4 4" />
+          </svg>
+          <input
+            #myInput
+            type="search"
+            placeholder="Search products..."
+            [value]="searchTerm()"
+            (input)="searchTerm.set(myInput.value)"
+          />
+        </label>
+        @if (authService.isAuthenticated()) {
+          <a
+            class="cart-icon-link"
+            routerLink="/cart"
+            routerLinkActive="active"
+            [attr.aria-label]="'Shopping cart, ' + cartService.itemCount() + ' items'"
+            title="Shopping cart"
+            (click)="closeMenu()"
+          >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M3 4h2l2.2 10.1a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 1.9-1.4L22 8H6"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.8"
+              />
+              <circle cx="10" cy="20" r="1.2" fill="currentColor" />
+              <circle cx="18" cy="20" r="1.2" fill="currentColor" />
+            </svg>
+            @if (cartService.itemCount() > 0) {
+              <span class="cart-count" aria-hidden="true">
+                {{ cartService.itemCount() > 99 ? '99+' : cartService.itemCount() }}
+              </span>
+            }
+          </a>
+          <a
+            class="profile-avatar-link"
+            routerLink="/profile"
+            routerLinkActive="active"
+            [attr.aria-label]="profileError() || 'Open your profile'"
+            [title]="profileError() || 'Profile'"
+            (click)="closeMenu()"
+          >
+            @if (currentProfile()?.details?.pictureUrl && !profileImageFailed()) {
+              <img
+                class="profile-avatar-image"
+                [src]="currentProfile()?.details?.pictureUrl"
+                alt=""
+                (error)="profileImageFailed.set(true)"
+              />
+            } @else if (profileInitials) {
+              <span class="profile-avatar-initials">{{ profileInitials }}</span>
+            } @else {
+              <svg class="profile-avatar-placeholder" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="8" r="3.5" />
+                <path d="M5 20c.7-3.7 3.2-5.5 7-5.5s6.3 1.8 7 5.5" />
+              </svg>
+            }
+          </a>
+        } @else {
+          <a class="sign-in-button" routerLink="/login" (click)="closeMenu()">Sign in</a>
+        }
+      </div>
+    </div>
+  </div>
+</header>

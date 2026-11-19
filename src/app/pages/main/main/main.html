@@ -1,0 +1,107 @@
+<app-categories [limit]="4" [brandSlides]="brands()" />
+
+<section class="featured-products" aria-labelledby="featured-products-title">
+  <header class="featured-products__heading">
+    <div>
+      <p class="eyebrow eyebrow--badge">Just in</p>
+      <h2 id="featured-products-title">Newest arrivals</h2>
+    </div>
+    <a class="featured-products__link" routerLink="/shops">Shop all</a>
+  </header>
+
+  @if (featuredLoading()) {
+    <p class="featured-products__state" role="status">Finding featured products...</p>
+  } @else if (featuredError()) {
+    <p class="featured-products__state featured-products__error" role="alert">
+      {{ featuredError() }}
+    </p>
+  } @else if (featuredProducts().length === 0) {
+    <p class="featured-products__state">No featured products are available right now.</p>
+  } @else {
+    <div class="featured-products__list">
+      @for (product of featuredProducts(); track product.id) {
+        <app-product-card
+          [product]="product"
+          (addToCartRequested)="addToCart($event)"
+        />
+      }
+    </div>
+  }
+</section>
+
+<section class="shop-comments" aria-labelledby="shop-comments-title">
+  <header class="featured-products__heading">
+    <div>
+      <p class="eyebrow eyebrow--badge">Community</p>
+      <h2 id="shop-comments-title">Shopper comments</h2>
+    </div>
+    <span class="shop-comment__badge">Sample comments</span>
+  </header>
+  <div class="shop-comments__list">
+    <article class="shop-comment">
+      <div class="shop-comment__avatar" aria-hidden="true">AM</div>
+      <div class="shop-comment__body">
+        <header class="shop-comment__header">
+          <div>
+            <p class="shop-comment__name">Alex M.</p>
+            <p class="shop-comment__meta">Example shopper</p>
+          </div>
+          <span class="shop-comment__badge">Mockup</span>
+        </header>
+        <p class="shop-comment__text">
+          I found it easy to compare products and find the tech I needed.
+        </p>
+      </div>
+    </article>
+
+    <article class="shop-comment">
+      <div class="shop-comment__avatar" aria-hidden="true">JS</div>
+      <div class="shop-comment__body">
+        <header class="shop-comment__header">
+          <div>
+            <p class="shop-comment__name">Jordan S.</p>
+            <p class="shop-comment__meta">Example shopper</p>
+          </div>
+          <span class="shop-comment__badge">Mockup</span>
+        </header>
+        <p class="shop-comment__text">
+          The categories made browsing for a new accessory simple.
+        </p>
+      </div>
+    </article>
+
+    <article class="shop-comment">
+      <div class="shop-comment__avatar" aria-hidden="true">KT</div>
+      <div class="shop-comment__body">
+        <header class="shop-comment__header">
+          <div>
+            <p class="shop-comment__name">Kai T.</p>
+            <p class="shop-comment__meta">Example shopper</p>
+          </div>
+          <span class="shop-comment__badge">Mockup</span>
+        </header>
+        <p class="shop-comment__text">
+          Saving favorites is handy when I want to compare items later.
+        </p>
+      </div>
+    </article>
+
+    <article class="shop-comment">
+      <div class="shop-comment__avatar" aria-hidden="true">RL</div>
+      <div class="shop-comment__body">
+        <header class="shop-comment__header">
+          <div>
+            <p class="shop-comment__name">Riley L.</p>
+            <p class="shop-comment__meta">Example shopper</p>
+          </div>
+          <span class="shop-comment__badge">Mockup</span>
+        </header>
+        <p class="shop-comment__text">
+          Product details are clear, and the store is easy to navigate.
+        </p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<app-shop-benefits />

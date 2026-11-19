@@ -1,0 +1,131 @@
+<main class="categories-page">
+  <section
+    class="category-hero"
+    aria-label="Featured technology"
+    aria-roledescription="carousel"
+    (mouseenter)="onMouseEnter()"
+    (mouseleave)="onMouseLeave()"
+    (focusin)="onFocusIn()"
+    (focusout)="onFocusOut()"
+  >
+    @for (slide of slides; track slide.title; let index = $index) {
+      <div
+        class="category-hero__slide"
+        [class.is-active]="activeSlide() === index"
+        [attr.aria-hidden]="activeSlide() !== index"
+      >
+        <img [src]="slide.imageUrl" [alt]="slide.imageAlt" />
+        <div class="category-hero__content">
+          <p class="category-hero__eyebrow">TechNest collection</p>
+          <h2>{{ slide.title }}</h2>
+          <p class="category-hero__description">{{ slide.description }}</p>
+        </div>
+      </div>
+    }
+
+    <div class="category-hero__controls" role="group" aria-label="Slideshow controls">
+      <button
+        type="button"
+        class="category-hero__arrow"
+        aria-label="Previous slide"
+        (click)="showSlide(activeSlide() - 1)"
+      >
+        ‹
+      </button>
+      <div class="category-hero__indicators">
+        @for (slide of slides; track slide.title; let index = $index) {
+          <button
+            type="button"
+            class="category-hero__indicator"
+            [class.is-active]="activeSlide() === index"
+            [attr.aria-label]="'Go to slide ' + (index + 1)"
+            [attr.aria-current]="activeSlide() === index ? 'true' : null"
+            (click)="showSlide(index)"
+          ></button>
+        }
+      </div>
+      <button
+        type="button"
+        class="category-hero__arrow"
+        aria-label="Next slide"
+        (click)="showSlide(activeSlide() + 1)"
+      >
+        ›
+      </button>
+    </div>
+  </section>
+
+  @if (brandSlides().length > 0) {
+    <section
+      class="brand-carousel"
+      aria-label="Shop by brand"
+      aria-roledescription="carousel"
+      (mouseenter)="onBrandsMouseEnter()"
+      (mouseleave)="onBrandsMouseLeave()"
+      (focusin)="onBrandsFocusIn()"
+      (focusout)="onBrandsFocusOut()"
+    >
+      <div class="brand-carousel__heading">
+        <h2>Shop popular brands</h2>
+        @if (showBrandControls()) {
+          <div class="brand-carousel__controls" role="group" aria-label="Brand carousel controls">
+            <button type="button" aria-label="Previous brands" (click)="showPreviousBrands()">‹</button>
+            <button type="button" aria-label="Next brands" (click)="showNextBrands()">›</button>
+          </div>
+        }
+      </div>
+      <nav class="brand-carousel__list" aria-label="Browse products by brand">
+        @for (brand of visibleBrands(); track brand.name) {
+          <a
+            class="brand-carousel__link"
+            [animate.enter]="brandDirection() === 'next' ? 'brand-card-enter-next' : 'brand-card-enter-previous'"
+            [animate.leave]="brandDirection() === 'next' ? 'brand-card-leave-next' : 'brand-card-leave-previous'"
+            routerLink="/shops"
+            [queryParams]="{ brand: brand.name }"
+          >
+            @if (!failedBrandLogos().has(brand.name)) {
+              <img
+                [src]="brand.logoUrl"
+                [alt]="brand.name + ' logo'"
+                (error)="onBrandLogoError(brand.name)"
+              />
+            }
+            <span>{{ brand.name }}</span>
+          </a>
+        }
+      </nav>
+    </section>
+  }
+
+  <header class="categories-heading">
+    <p class="eyebrow">Find your next favorite</p>
+    <h1>Shop by category</h1>
+    <p class="categories-intro">Explore our collection and find the tech that fits your life.</p>
+  </header>
+
+  @if (loading()) {
+    <p class="category-state" role="status">Loading categories...</p>
+  } @else if (error()) {
+    <p class="category-state error-message" role="alert">{{ error() }}</p>
+  } @else if (categories().length === 0) {
+    <p class="category-state">No categories found.</p>
+  } @else {
+    <div class="category-list">
+      @for (category of categories(); track category.id) {
+        <a class="category-card" routerLink="/shops" [queryParams]="{ category: category.id }">
+          <div class="category-card__image">
+            <img [src]="category.imageUrl" [alt]="category.name" />
+          </div>
+          <div class="category-card__content">
+            <h2>{{ category.name }}</h2>
+            <p>{{ category.description }}</p>
+            <div class="category-card__footer">
+              <span>{{ category.productCount }} products</span>
+              <span class="category-card__arrow" aria-hidden="true">→</span>
+            </div>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</main>

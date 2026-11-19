@@ -1,0 +1,85 @@
+<article class="product-card" [class.product-card--shop]="shopLayout()">
+  <div class="product-card__actions">
+    <a
+      class="product-card__icon-button product-view-link"
+      [routerLink]="['/product', product().id]"
+      [queryParams]="{ category: product().category.id }"
+      [attr.aria-label]="'View details for ' + product().name"
+      title="View product details"
+    >
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path
+          d="M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.8"
+        />
+        <circle cx="12" cy="12" r="2.6" stroke="currentColor" stroke-width="1.8" />
+      </svg>
+    </a>
+    <button
+      class="product-card__icon-button product-favorite-button"
+      type="button"
+      [class.product-favorite-button--active]="favoritesService.favoriteIds().has(product().id)"
+      [disabled]="favoritesService.loading() || favoritesService.pendingIds().has(product().id)"
+      [attr.aria-pressed]="favoritesService.favoriteIds().has(product().id)"
+      [attr.aria-label]="(favoritesService.favoriteIds().has(product().id) ? 'Remove ' : 'Add ') + product().name + ' ' + (favoritesService.favoriteIds().has(product().id) ? 'from' : 'to') + ' favorites'"
+      [title]="favoritesService.favoriteIds().has(product().id) ? 'Remove from favorites' : 'Add to favorites'"
+      (click)="toggleFavorite()"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.8"
+        />
+      </svg>
+    </button>
+  </div>
+  @if (product().stock <= 0) {
+    <span class="product-stock-badge">Out of stock</span>
+  }
+  @if (product().imageUrl) {
+    <img [src]="product().imageUrl" [alt]="product().name" />
+  }
+  <div class="product-details">
+    <div class="product-meta">
+      <span class="product-category">{{ product().category.name }}</span>
+      @if (product().brand) {
+        <span class="product-brand">{{ product().brand }}</span>
+      }
+    </div>
+    <h2>{{ product().name }}</h2>
+    <app-product-rating [rating]="product().rating" />
+    <strong>
+      @if (shopLayout()) {
+        USD {{ product().price | number: '1.0-0' }}
+      } @else {
+        ${{ product().price }}
+      }
+    </strong>
+    <button
+      class="add-to-cart-button"
+      type="button"
+      [disabled]="product().stock <= 0"
+      (click)="addToCartRequested.emit(product())"
+      [attr.aria-label]="'Add ' + product().name + ' to cart'"
+    >
+      <svg class="add-to-cart-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path
+          d="M3 4h2l2.2 10.1a2 2 0 0 0 2 1.6h8.7a2 2 0 0 0 1.9-1.4L22 8H6"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.8"
+        />
+        <circle cx="10" cy="20" r="1.2" fill="currentColor" />
+        <circle cx="18" cy="20" r="1.2" fill="currentColor" />
+      </svg>
+      <span>Add to cart</span>
+    </button>
+  </div>
+</article>

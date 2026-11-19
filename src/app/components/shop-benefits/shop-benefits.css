@@ -1,0 +1,82 @@
+:host {
+  display: block;
+}
+
+.shop-benefits {
+  display: grid;
+  width: min(1280px, 100%);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  margin: 160px auto 56px;
+  padding: 0 28px;
+}
+
+.shop-benefit {
+  display: flex;
+  min-height: 240px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 18px;
+  border: 1px solid var(--color-line);
+  border-radius: 17px;
+  background: var(--color-surface);
+  text-align: center;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.shop-benefit:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-ink);
+}
+
+.shop-benefit__icon {
+  display: grid;
+  width: 72px;
+  height: 72px;
+  place-items: center;
+  margin-bottom: 20px;
+  border-radius: 14px;
+  background: var(--color-surface-soft);
+  color: var(--color-primary);
+}
+
+.shop-benefit__icon svg {
+  width: 32px;
+  height: 32px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.shop-benefit h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 650;
+}
+
+.shop-benefit p {
+  margin: 5px 0 0;
+  color: var(--color-muted);
+  font-size: 0.88rem;
+}
+
+@media (max-width: 600px) {
+  .shop-benefits {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 0 18px;
+  }
+
+  .shop-benefit {
+    min-height: 200px;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+  .shop-benefits {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+}

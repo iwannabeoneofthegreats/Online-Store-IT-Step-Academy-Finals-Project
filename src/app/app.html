@@ -1,0 +1,37 @@
+<app-navbar />
+@if (cartService.notice()) {
+  <aside
+    class="cart-notice"
+    [class.cart-notice--success]="cartService.noticeKind() === 'success'"
+    [class.cart-notice--error]="cartService.noticeKind() === 'login' || cartService.noticeKind() === 'error'"
+    [class.cart-notice--leaving]="cartService.noticeExiting()"
+    [attr.role]="cartService.noticeKind() === 'success' ? 'status' : 'alert'"
+    aria-live="polite"
+  >
+    @if (cartService.noticeKind() === 'success') {
+      <svg class="cart-notice__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" />
+        <path d="m8 12 2.5 2.5L16.5 9" />
+      </svg>
+    } @else {
+      <svg class="cart-notice__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 8v5M12 16.5v.1" />
+      </svg>
+    }
+    <span>{{ cartService.notice() }}</span>
+    @if (cartService.noticeKind() === 'login') {
+      <a routerLink="/register">Register</a>
+    }
+    <button
+      type="button"
+      aria-label="Dismiss notification"
+      (click)="cartService.dismissNotice()"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m6 6 12 12M18 6 6 18" />
+      </svg>
+    </button>
+  </aside>
+}
+<router-outlet />
