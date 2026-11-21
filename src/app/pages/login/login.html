@@ -1,6 +1,6 @@
 
 <main class="login-page">
-  <form class="login-card" #loginForm="ngForm" (ngSubmit)="submit(loginForm)">
+  <form class="login-card" [formGroup]="loginForm" (ngSubmit)="submit()">
     <p class="login-eyebrow">Welcome back</p>
     <h1>Sign in</h1>
     <p class="login-intro">Sign in to continue to your account.</p>
@@ -8,19 +8,15 @@
     <label for="email">Email</label>
     <input
       id="email"
-      name="email"
       type="email"
       autocomplete="email"
-      required
-      [pattern]="emailPattern"
-      ngModel
-      #emailInput="ngModel"
-      [class.invalid]="emailInput.invalid && emailInput.touched"
+      formControlName="email"
+      [class.invalid]="loginForm.controls.email.invalid && loginForm.controls.email.touched"
     />
 
-    @if (emailInput.invalid && emailInput.touched) {
+    @if (loginForm.controls.email.invalid && loginForm.controls.email.touched) {
       <p class="login-error">
-        @if (emailInput.errors?.['required']) {
+        @if (loginForm.controls.email.errors?.['required']) {
           Email is required.
         } @else {
           Please enter a valid email address.
@@ -33,14 +29,10 @@
     <div class="password-field">
       <input
         id="password"
-        name="password"
         [type]="passwordVisible() ? 'text' : 'password'"
         autocomplete="new-password"
-        required
-        [pattern]="passwordPattern"
-        ngModel
-        #passwordInput="ngModel"
-        [class.invalid]="passwordInput.invalid && passwordInput.touched"
+        formControlName="password"
+        [class.invalid]="loginForm.controls.password.invalid && loginForm.controls.password.touched"
       />
 
       <button
@@ -53,10 +45,10 @@
       </button>
     </div>
 
-    @if (passwordInput.dirty && passwordInput.value) {
+    @if (loginForm.controls.password.dirty && loginForm.controls.password.value) {
       <div class="password-requirements">
         @for (
-          requirement of getPasswordRequirements(passwordInput.value);
+          requirement of getPasswordRequirements(loginForm.controls.password.value);
           track requirement
         ) {
           <p class="login-error">{{ requirement }}</p>

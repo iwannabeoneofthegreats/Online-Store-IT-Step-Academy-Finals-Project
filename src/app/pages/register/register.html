@@ -6,7 +6,7 @@
       <p class="register-intro">Your account is ready. Sign in to continue.</p>
       <button type="button" (click)="goToLogin()">Go to sign in</button>
     } @else if (verificationPending()) {
-      <form #verificationForm="ngForm" (ngSubmit)="submitVerification(verificationForm)">
+      <form [formGroup]="verificationForm" (ngSubmit)="submitVerification()">
         <p class="register-eyebrow">One last step</p>
         <h1>Verify your email</h1>
         <p class="register-intro">
@@ -16,11 +16,9 @@
         <label for="code">Verification code</label>
         <input
           id="code"
-          name="code"
           type="text"
           autocomplete="one-time-code"
-          required
-          ngModel
+          formControlName="code"
         />
 
         @if (error()) {
@@ -32,34 +30,30 @@
         </button>
       </form>
     } @else {
-      <form #registrationForm="ngForm" (ngSubmit)="submitRegistration(registrationForm)">
+      <form [formGroup]="registrationForm" (ngSubmit)="submitRegistration()">
         <p class="register-eyebrow">Join TechNest</p>
         <h1>Create account</h1>
         <p class="register-intro">Create an account to shop with us.</p>
 
         <label for="firstName">First name</label>
-        <input id="firstName" name="firstName" type="text" autocomplete="given-name" required ngModel />
+        <input id="firstName" type="text" autocomplete="given-name" formControlName="firstName" />
 
         <label for="lastName">Last name</label>
-        <input id="lastName" name="lastName" type="text" autocomplete="family-name" required ngModel />
+        <input id="lastName" type="text" autocomplete="family-name" formControlName="lastName" />
 
         <label for="email">Email</label>
 
         <input
           id="email"
-          name="email"
           type="email"
           autocomplete="email"
-          required
-          [pattern]="emailPattern"
-          ngModel
-          #emailInput="ngModel"
-          [class.invalid]="emailInput.invalid && emailInput.touched"
+          formControlName="email"
+          [class.invalid]="registrationForm.controls.email.invalid && registrationForm.controls.email.touched"
         />
 
-        @if (emailInput.invalid && emailInput.touched) {
+        @if (registrationForm.controls.email.invalid && registrationForm.controls.email.touched) {
           <p class="register-error">
-            @if (emailInput.errors?.['required']) {
+            @if (registrationForm.controls.email.errors?.['required']) {
               Email is required.
             } @else {
               Please enter a valid email address.
@@ -72,14 +66,10 @@
       <div class="password-field">
         <input
           id="password"
-          name="password"
           [type]="passwordVisible() ? 'text' : 'password'"
           autocomplete="new-password"
-          required
-          [pattern]="passwordPattern"
-          ngModel
-          #passwordInput="ngModel"
-          [class.invalid]="passwordInput.invalid && passwordInput.touched"
+          formControlName="password"
+          [class.invalid]="registrationForm.controls.password.invalid && registrationForm.controls.password.touched"
         />
 
         <button
@@ -92,10 +82,10 @@
         </button>
       </div>
 
-      @if (passwordInput.dirty && passwordInput.value) {
+      @if (registrationForm.controls.password.dirty && registrationForm.controls.password.value) {
         <div class="password-requirements">
           @for (
-            requirement of getPasswordRequirements(passwordInput.value);
+            requirement of getPasswordRequirements(registrationForm.controls.password.value);
             track requirement
           ) {
             <p class="login-error">{{ requirement }}</p>
