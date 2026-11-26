@@ -7,7 +7,7 @@ import { CartService } from './services/cart';
   selector: 'app-root',
   imports: [Navbar, RouterLink, RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.css',
+  styleUrl: './app.scss',
 })
 export class App {
   readonly cartService = inject(CartService);

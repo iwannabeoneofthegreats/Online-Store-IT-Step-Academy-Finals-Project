@@ -12,7 +12,7 @@ import { UserService } from '../../services/user';
   selector: 'app-navbar',
   imports: [RouterLink, RouterLinkActive],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.css',
+  styleUrl: './navbar.scss',
 })
 export class Navbar implements OnInit {
   private readonly storeService = inject(StoreService);

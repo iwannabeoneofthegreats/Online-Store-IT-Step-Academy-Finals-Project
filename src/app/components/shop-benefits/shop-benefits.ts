@@ -4,6 +4,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   selector: 'app-shop-benefits',
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './shop-benefits.html',
-  styleUrl: './shop-benefits.css',
+  styleUrl: './shop-benefits.scss',
 })
 export class ShopBenefits {}

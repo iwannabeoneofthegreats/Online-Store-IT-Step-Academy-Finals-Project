@@ -18,7 +18,7 @@ import { UserService } from '../../services/user';
   selector: 'app-product-detail',
   imports: [CurrencyPipe, DatePipe, ProductCard, ProductRating, RouterLink, ShopBenefits],
   templateUrl: './product-detail.html',
-  styleUrl: './product-detail.css',
+  styleUrl: './product-detail.scss',
 })
 export class ProductDetail implements OnInit {
   private readonly destroyRef = inject(DestroyRef);

@@ -28,7 +28,7 @@ interface HeroSlide {
   selector: 'app-categories',
   imports: [RouterLink],
   templateUrl: './categories.html',
-  styleUrl: './categories.css',
+  styleUrl: './categories.scss',
 })
 export class Categories implements OnInit, OnDestroy, OnChanges {
   private storeService = inject(StoreService);

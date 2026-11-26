@@ -9,7 +9,7 @@ import { ProductCard } from '../../components/product-card/product-card';
   selector: 'app-favorites',
   imports: [ProductCard, RouterLink],
   templateUrl: './favorites.html',
-  styleUrl: './favorites.css',
+  styleUrl: './favorites.scss',
 })
 export class Favorites implements OnInit {
   private readonly favoritesService = inject(FavoritesService);

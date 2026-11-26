@@ -10,7 +10,7 @@ import { ProductRating } from '../product-rating/product-rating';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DecimalPipe, ProductRating, RouterLink],
   templateUrl: './product-card.html',
-  styleUrl: './product-card.css',
+  styleUrl: './product-card.scss',
 })
 export class ProductCard implements OnInit {
   readonly product = input.required<Product>();

@@ -19,7 +19,7 @@ import { ProductCard } from '../../components/product-card/product-card';
   selector: 'app-products',
   imports: [ProductCard],
   templateUrl: './products.html',
-  styleUrl: './products.css',
+  styleUrl: './products.scss',
 })
 export class Products implements OnChanges {
 

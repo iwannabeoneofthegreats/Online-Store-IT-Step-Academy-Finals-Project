@@ -13,7 +13,7 @@ import { ShopBenefits } from '../../../components/shop-benefits/shop-benefits';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Categories, ProductCard, RouterLink, ShopBenefits],
   templateUrl: './main.html',
-  styleUrl: './main.css',
+  styleUrl: './main.scss',
 })
 export class Main implements OnInit {
   private readonly storeService = inject(StoreService);

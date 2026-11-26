@@ -22,7 +22,7 @@ interface ProfileForm {
   selector: 'app-profile',
   imports: [FormsModule, RouterLink],
   templateUrl: './profile.html',
-  styleUrl: './profile.css',
+  styleUrl: './profile.scss',
 })
 export class Profile implements OnInit {
   private readonly userService = inject(UserService);

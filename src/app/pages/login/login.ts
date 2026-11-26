@@ -10,7 +10,7 @@ import { CartService } from '../../services/cart';
   selector: 'app-login',
   imports: [ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
-  styleUrl: './login.css',
+  styleUrl: './login.scss',
 })
 export class Login {
   private readonly formBuilder = inject(FormBuilder);

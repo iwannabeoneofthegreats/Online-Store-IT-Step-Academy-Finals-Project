@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [DecimalPipe],
   templateUrl: './product-rating.html',
-  styleUrl: './product-rating.css',
+  styleUrl: './product-rating.scss',
 })
 export class ProductRating {
   readonly rating = input.required<number>();

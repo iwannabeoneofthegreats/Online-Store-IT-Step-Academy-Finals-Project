@@ -1,1 +1,1 @@
-export const environment = { stepKey: '7aad6ad2-d3ec-4c52-b3dc-fad48cd874f7' };
+export const environment = { stepKey: 'afa1c5ed-2e69-4ab5-b045-2f448290c39a' };

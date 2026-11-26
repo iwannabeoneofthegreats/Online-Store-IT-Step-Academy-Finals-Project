@@ -10,7 +10,7 @@ import { ShopBenefits } from '../../components/shop-benefits/shop-benefits';
   selector: 'app-shop',
   imports: [Products, RouterLink, ShopBenefits],
   templateUrl: './shop.html',
-  styleUrl: './shop.css',
+  styleUrl: './shop.scss',
 })
 export class Shop implements OnInit {
   private readonly route = inject(ActivatedRoute);

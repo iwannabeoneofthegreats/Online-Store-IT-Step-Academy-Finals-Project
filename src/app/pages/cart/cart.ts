@@ -8,7 +8,7 @@ import { ProductRating } from '../../components/product-rating/product-rating';
   selector: 'app-cart',
   imports: [CurrencyPipe, ProductRating, RouterLink],
   templateUrl: './cart.html',
-  styleUrl: './cart.css',
+  styleUrl: './cart.scss',
 })
 export class Cart {
   readonly cartService = inject(CartService);
